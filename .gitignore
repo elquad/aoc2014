@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+venv/
+.env/
+.env.bak/
+env/
+
+.idea/
+.vscode/
+
+inputs/
+*.txt
+input.txt
+input_*.txt
+
