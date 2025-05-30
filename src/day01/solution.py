@@ -19,7 +19,7 @@ def get_similarity_score(l1: list[int], l2: list[int]) -> int:
     return total_score
 
 
-l1, l2 = read_lists("../inputs/example_day01")
+l1, l2 = read_lists("../../inputs/example_day01")
 dist = find_dist(l1, l2)
 score = get_similarity_score(l1, l2)
 print(dist)
