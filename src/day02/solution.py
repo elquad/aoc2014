@@ -1,8 +1,13 @@
+"""
+AoC 2024, day 02, parts 1 & 2
+Uses a custom iterator to provide a sliding window over integer sequences with optional skipping of a single element.
+"""
+
 from collections import deque
 
 
 class SlidingPairs:
-    """Iterates over elements from line, optionally skips an element."""
+    """Yields consecutive pairs from the sequence, with optional skipping of a single element at the specified index."""
     def _advance_window(self) -> None:
         if self._skip_idx is not None and self._skip_idx == self._index:
             next(self._source)
@@ -46,27 +51,30 @@ def is_pair_safe(diff: int, first_diff: int) -> bool:
     return True
 
 
-def is_sequence_safe(line: str, skip_idx: int | None = None) -> bool:
+def is_sequence_safe(line: str, permit_one_error: bool, skip_idx: int | None = None) -> bool:
     first_diff = None
     for idx, (a, b) in enumerate(SlidingPairs(line, skip_idx)):
         if first_diff is None:
             first_diff = a - b
-        if not is_pair_safe(a - b, first_diff):
+        if not is_pair_safe(a - b, first_diff) and permit_one_error:
             if skip_idx is not None:
                 return False  # second pass permits no unsafe pairs
             return any([
-                    is_sequence_safe(line, idx-1),
-                    is_sequence_safe(line, idx),
-                    is_sequence_safe(line, idx+1)
+                    is_sequence_safe(line, True, idx-1),
+                    is_sequence_safe(line, True, idx),
+                    is_sequence_safe(line, True, idx+1)
             ])
+        if not is_pair_safe(a - b, first_diff) and not permit_one_error:
+            return False
 
     return True
 
 
-def get_safe_count(filename: str) -> int:
+def get_safe_count(filename: str, permit_one_error: bool) -> int:
     with open(filename) as f:
-        return sum(is_sequence_safe(line) for line in f)
+        return sum(is_sequence_safe(line, permit_one_error) for line in f)
 
 
-report_safe = get_safe_count("../../inputs/day02.txt")
-print(report_safe)
+if __name__ == "__main__":
+    print(get_safe_count("../../inputs/day02.txt", False))
+    print(get_safe_count("../../inputs/day02.txt", True))
