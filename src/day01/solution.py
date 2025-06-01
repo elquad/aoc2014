@@ -1,3 +1,9 @@
+"""
+AoC 2024, day 01, parts 1 & 2
+Part 1 computes the distance between numbers in two lists, and part 2 computes a similarity score based on number of occurences between lists.
+"""
+
+
 def read_lists(filename: str) -> tuple[list[int], list[int]]:
     with open(filename) as f:
         l1_vals, l2_vals = zip(*(line.split() for line in f))
@@ -19,8 +25,9 @@ def get_similarity_score(l1: list[int], l2: list[int]) -> int:
     return total_score
 
 
-l1, l2 = read_lists("../../inputs/example_day01")
-dist = find_dist(l1, l2)
-score = get_similarity_score(l1, l2)
-print(dist)
-print(score)
+if __name__ == "__main__":
+    l1, l2 = read_lists("../../inputs/day01.txt")
+    dist = find_dist(l1, l2)
+    score = get_similarity_score(l1, l2)
+    print(dist)  # Part 01
+    print(score)  # Part 02
