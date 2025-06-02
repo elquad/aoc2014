@@ -1,10 +1,9 @@
 """
-AoC 2024, day 04, part 1
-Find horizontal, vertical, and diagonal occurences of WORD in the input.
+AoC 2024, day 04, parts 1 & 2
+"Word puzzle"
 """
 
 
-import operator
 import re
 
 
@@ -12,10 +11,37 @@ WORD = "XMAS"
 DIAGONALS = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
 
+def count_x_mas_patterns(y: int, x: int, text: list[str]) -> int:
+    """
+    Finds count of 'MAS' written in self-crossing fashion.
+
+    Args:
+        y: Row index of the center coordinate.
+        x: Column index of the center coordinate.
+        text: List of strings, each representing a row of the grid.
+    """
+    count = 0
+    if not (1 <= y < len(text)-1 and 1 <= x < len(text[0])-1):
+        return 0
+    if (
+            (text[y-1][x-1] == "M" and text[y+1][x+1] == "S") or
+            (text[y-1][x-1] == "S" and text[y+1][x+1] == "M")
+        ) and (
+            (text[y+1][x-1] == "M" and text[y-1][x+1] == "S") or
+            (text[y+1][x-1] == "S" and text[y-1][x+1] == "M")):
+        count += 1
+    return count
+
+
 def count_diagonal_patterns(y: int, x: int, text: list[str]) -> int:
     """
     Finds count of the four possible diagonal patterns,
     makes sure negative slicing does not detect false positives.
+
+    Args:
+        y: Row index of the first letter coordinate.
+        x: Column index of the first letter coordinate.
+        text: List of strings, each representing a row of the grid.
     """
     count = 0
     for dy, dx in DIAGONALS:
@@ -32,10 +58,15 @@ def count_diagonal_patterns(y: int, x: int, text: list[str]) -> int:
     return count
 
 
-def find_patterns(text: list[str]) -> int:
+def find_patterns(text: list[str]) -> tuple[int, int]:
+    """
+    Finds horizontal, vertical, and diagonal occurences of XMAS.
+    Finds cross-wise occurences of MAS.
+    """
     horizontal = 0
     vertical = 0
     diagonal = 0
+    x_mas = 0
 
     for line in zip(*text):
         vertical += ''.join(line).count(WORD)
@@ -46,10 +77,15 @@ def find_patterns(text: list[str]) -> int:
         for char_idx, char in enumerate(line):
             if char == WORD[0]:
                 diagonal += count_diagonal_patterns(line_idx, char_idx, text)
+            if char == "A":
+                x_mas += count_x_mas_patterns(line_idx, char_idx, text)
 
-    return horizontal + vertical + diagonal
+    return (horizontal + vertical + diagonal, x_mas)
 
 
 if __name__ == "__main__":
     with open("../../inputs/day04.txt") as f:
-        print(find_patterns([line.strip() for line in f.readlines()]))  # Part 01
+        xmas, x_mas = find_patterns([line.strip() for line in f.readlines()])
+
+print(xmas)  # Part 01
+print(x_mas)  # Part 02
